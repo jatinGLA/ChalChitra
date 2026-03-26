@@ -1,0 +1,96 @@
+.navbar {
+  background-color: var(--card-bg);
+  padding: 15px 40px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  color: var(--text-main);
+  text-decoration: none;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.navbar-logo span {
+  color: var(--primary-color);
+}
+
+.navbar-search {
+  flex: 1;
+  margin: 0 40px;
+  max-width: 500px;
+}
+
+.navbar-search input {
+  width: 100%;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.navbar-search input:focus {
+  border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 10px rgba(229, 9, 20, 0.2);
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.location {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+.location:hover {
+  color: var(--text-main);
+}
+
+.login-btn {
+  background-color: transparent;
+  color: var(--text-main);
+  border: 1px solid var(--primary-color);
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background-color: var(--primary-color);
+  box-shadow: 0 0 15px var(--accent-glow);
+}

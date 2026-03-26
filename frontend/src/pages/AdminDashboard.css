@@ -1,0 +1,214 @@
+.admin-panel-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  margin-top: -80px;
+}
+
+.admin-sidebar {
+  width: 280px;
+  background: var(--card-bg);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 0;
+}
+
+.sidebar-logo {
+  font-size: 1.8rem;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  padding: 0 30px;
+  margin-bottom: 50px;
+}
+
+.sidebar-logo span {
+  color: var(--primary-color);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-nav button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 15px 30px;
+  text-align: left;
+  font-size: 1.05rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.3s;
+  border-left: 3px solid transparent;
+}
+
+.sidebar-nav button:hover {
+  background: rgba(255,255,255,0.02);
+  color: var(--text-main);
+}
+
+.sidebar-nav button.active {
+  background: rgba(229, 9, 20, 0.1);
+  color: var(--primary-color);
+  border-left-color: var(--primary-color);
+  font-weight: 600;
+}
+
+.admin-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.2);
+}
+
+.admin-topbar h2 {
+  font-size: 1.8rem;
+  color: var(--text-main);
+}
+
+.admin-profile {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card-bg);
+  padding: 8px 20px;
+  border-radius: 30px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-scrollable-area {
+  padding: 40px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.admin-stats-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.overview-card {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.overview-card.highlight {
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.1) 0%, rgba(229, 9, 20, 0.02) 100%);
+  border-color: rgba(229, 9, 20, 0.3);
+}
+
+.overview-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.overview-card h2 {
+  font-size: 2.5rem;
+  color: var(--text-main);
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+.admin-table-section {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-table-section h3 {
+  margin-bottom: 25px;
+  font-size: 1.4rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 15px 20px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-table th {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge.warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+.badge.info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+.badge.default { background: rgba(255, 255, 255, 0.1); color: #ccc; }
+
+.action-cells {
+  display: flex;
+  gap: 10px;
+}
+
+.action-cells button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+}
+
+.approve-btn { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+.approve-btn:hover { background: #10b981; color: #fff; }
+.reject-btn { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+.reject-btn:hover { background: #ef4444; color: #fff; }
+.view-btn { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.view-btn:hover { background: #fff; color: #000; }
+
+.admin-recent-activity {
+  background: var(--card-bg);
+  padding: 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.admin-recent-activity h3 {
+  margin-bottom: 20px;
+}
+
+.activity-list li {
+  padding: 15px 0;
+  border-bottom: 1px dashed rgba(255,255,255,0.05);
+  color: var(--text-muted);
+}
+
+.placeholder-pane {
+  text-align: center;
+  padding: 100px 20px;
+  color: var(--text-muted);
+}

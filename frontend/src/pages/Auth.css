@@ -1,0 +1,231 @@
+.auth-wrapper {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: radial-gradient(circle at top right, rgba(229, 9, 20, 0.1), transparent 50%);
+}
+
+.auth-container {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 480px;
+  padding: 40px 40px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.auth-header h2 {
+  font-size: 2rem;
+  margin-bottom: 5px;
+  color: var(--text-main);
+}
+
+.auth-header p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.role-selector {
+  display: flex;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8px;
+  padding: 5px;
+  margin-bottom: 25px;
+}
+
+.role-selector button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.role-selector button.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 4px 10px rgba(229, 9, 20, 0.3);
+}
+
+.auth-tabs {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+}
+
+.auth-tabs span {
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 5px 0;
+  position: relative;
+}
+
+.auth-tabs span.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.auth-tabs span.active::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--primary-color);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 8px;
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: var(--primary-color);
+}
+
+.mobile-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  background: rgba(0,0,0,0.3);
+}
+
+.country-code {
+  padding: 12px 15px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted);
+}
+
+.mobile-input input {
+  border: none;
+  background: transparent;
+  padding: 12px 15px;
+  flex: 1;
+  color: white;
+  outline: none;
+}
+
+.auth-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 14px;
+}
+
+.social-auth {
+  margin-top: 25px;
+  text-align: center;
+}
+
+.social-auth p {
+  color: var(--text-muted);
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+  position: relative;
+}
+
+.social-auth p::before, .social-auth p::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 25%;
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+}
+
+.social-auth p::before { left: 0; }
+.social-auth p::after { right: 0; }
+
+.social-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.social-btn img {
+  width: 20px;
+  height: 20px;
+}
+
+.social-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.auth-footer {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+}
+
+.auth-toggle {
+  color: var(--primary-color);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.auth-toggle:hover {
+  text-decoration: underline;
+  color: #ff0f1b;
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 30px 20px;
+  }
+}
