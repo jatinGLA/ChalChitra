@@ -1,6 +1,6 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
-import Booking from '../models/Booking.js';
+import supabase from '../config/supabaseClient.js';
 
 export const createOrder = async (req, res) => {
   try {
@@ -39,12 +39,33 @@ export const verifyPayment = async (req, res) => {
 
     if (razorpay_signature === expectedSign) {
       // Payment is verified
-      const booking = await Booking.findById(bookingId);
+      const { data: booking } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('id', bookingId)
+        .single();
+        
       if (booking) {
-        booking.paymentStatus = 'Completed';
-        booking.paymentId = razorpay_payment_id;
-        booking.eTicketUrl = `/api/tickets/${booking._id}`;
-        await booking.save();
+        await supabase
+          .from('bookings')
+          .update({
+            payment_status: 'Completed',
+            payment_id: razorpay_payment_id,
+            e_ticket_url: `/api/tickets/download/${booking.id}`
+          })
+          .eq('id', booking.id);
+          
+        // Automatically generate matching 'Tickets' for the resale engine
+        const ticketsToInsert = booking.seats.map(seat => ({
+          booking_id: booking.id,
+          event_id: booking.event_id,
+          owner_id: booking.user_id,
+          seat_number: seat,
+          is_resellable: false,
+          resale_active: false
+        }));
+
+        await supabase.from('tickets').insert(ticketsToInsert);
       }
       return res.status(200).json({ message: "Payment verified successfully" });
     } else {

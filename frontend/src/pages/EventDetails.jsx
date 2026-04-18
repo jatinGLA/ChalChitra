@@ -1,40 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './EventDetails.css';
 
 const EventDetails = () => {
   const { id } = useParams();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [ratingHover, setRatingHover] = useState(0);
   const [userRating, setUserRating] = useState(0);
-  
-  // Mock data
-  const event = {
-    id,
-    title: 'Arijit Singh Live',
-    category: 'Concert',
-    venue: 'JLN Stadium, Delhi',
-    date: '25th Nov 2026',
-    time: '6:30 PM',
-    price: 1999,
-    description: 'Join the musical sensation Arijit Singh for a night of soulful melodies. Minimum 5 stars guaranteed experience.',
-    image: 'https://images.unsplash.com/photo-1540039155732-d6888424a7ba?auto=format&fit=crop&q=80&w=1200',
-    overallRating: 4.8,
-    reviews: [
-      { id: 1, user: 'Priya Sharma', score: 5, text: 'Absolutely magical experience!', date: 'Oct 12, 2026' },
-      { id: 2, user: 'Rahul Verma', score: 4, text: 'Great crowd and music, but the entry was a bit chaotic.', date: 'Oct 15, 2026' }
-    ]
+  const [reviewText, setReviewText] = useState('');
+  const [reviewSuccess, setReviewSuccess] = useState(false);
+
+  useEffect(() => {
+    fetchEvent();
+  }, [id]);
+
+  const fetchEvent = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/events/${id}`);
+      if (!response.ok) throw new Error('Event not found');
+      const data = await response.json();
+      setEvent(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handlePostReview = () => {
+    if (userRating === 0 || reviewText.trim() === '') return;
+    setReviewSuccess(true);
+    setUserRating(0);
+    setReviewText('');
+    setTimeout(() => setReviewSuccess(false), 3000);
+  };
+
+  if (loading) {
+     return <div className="event-details-container" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh'}}>
+       <div className="loading-spinner"></div>
+     </div>;
+  }
+
+  if (!event) {
+    return <div className="event-details-container" style={{textAlign: 'center', padding: '100px'}}>
+      <h2>Event Not Found</h2>
+      <Link to="/" className="primary-btn" style={{marginTop: '20px'}}>Back to Home</Link>
+    </div>;
+  }
+
+  // Formatting helpers
+  const displayImage = event.image_url || 'https://images.unsplash.com/photo-1540039155732-d6888424a7ba?auto=format&fit=crop&q=80&w=1200';
+  const displayDate = event.date && !isNaN(Date.parse(event.date)) 
+    ? new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
+    : event.date;
+  const displayTime = event.date && !isNaN(Date.parse(event.date))
+    ? new Date(event.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+    : '7:00 PM';
+    
+  // Default mocks for fields not yet in DB
+  const overallRating = event.overallRating || 4.5;
+  const reviews = event.reviews || [
+    { id: 1, user: 'User ' + Math.floor(Math.random()*100), score: 5, text: 'The atmosphere was incredible!', date: 'Recent' }
+  ];
 
   return (
     <div className="event-details-container">
-      <div className="event-backdrop" style={{ backgroundImage: `url(${event.image})` }}>
+      <div className="event-backdrop" style={{ backgroundImage: `url(${displayImage})` }}>
         <div className="backdrop-overlay"></div>
       </div>
       
       <div className="event-details-content">
         <div className="event-info-main">
           <div className="event-poster">
-            <img src={event.image} alt={event.title} />
+            <img src={displayImage} alt={event.title} />
           </div>
           <div className="event-action-box">
              <h3>₹{event.price} <span className="starting-from">onwards</span></h3>
@@ -45,7 +84,7 @@ const EventDetails = () => {
         <div className="event-info">
           <div className="event-header-row">
             <span className="event-category-tag">{event.category}</span>
-            <div className="overall-rating-badge">★ {event.overallRating}/5</div>
+            <div className="overall-rating-badge">★ {overallRating}/5</div>
           </div>
           <h1 className="event-title">{event.title}</h1>
           
@@ -54,7 +93,7 @@ const EventDetails = () => {
               <span className="icon">📅</span>
               <div>
                 <h4>Date & Time</h4>
-                <p>{event.date} | {event.time}</p>
+                <p>{displayDate} | {displayTime}</p>
               </div>
             </div>
             <div className="meta-item">
@@ -87,12 +126,19 @@ const EventDetails = () => {
                    >★</span>
                 ))}
               </div>
-              <textarea placeholder="Share your experience..." rows="3" className="review-textarea"></textarea>
-              <button className="primary-btn submit-review-btn">Post Review</button>
+              <textarea 
+                placeholder="Share your experience..." 
+                rows="3" 
+                className="review-textarea"
+                value={reviewText}
+                onChange={(e) => setReviewText(e.target.value)}
+              ></textarea>
+              <button className="primary-btn submit-review-btn" onClick={handlePostReview}>Post Review</button>
+              {reviewSuccess && <p style={{color: '#10b981', marginTop: '10px', fontSize: '14px'}}>Review posted successfully!</p>}
             </div>
 
             <div className="reviews-list">
-              {event.reviews.map(review => (
+              {reviews.map(review => (
                 <div key={review.id} className="review-item">
                   <div className="review-header">
                     <div className="reviewer-avatar">{review.user.charAt(0)}</div>

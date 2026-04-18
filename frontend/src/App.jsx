@@ -11,6 +11,8 @@ import AdminDashboard from './pages/AdminDashboard'
 import Auth from './pages/Auth'
 import BookingSuccess from './pages/BookingSuccess'
 import HostEvent from './pages/HostEvent'
+import UserDashboard from './pages/UserDashboard'
+import ResaleMarket from './pages/ResaleMarket'
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path="/login" element={<Auth />} />
         <Route path="/success" element={<BookingSuccess />} />
         <Route path="/host" element={<HostEvent />} />
+        <Route path="/my-tickets" element={<UserDashboard />} />
+        <Route path="/resale-market" element={<ResaleMarket />} />
       </Routes>
       <Footer />
     </div>

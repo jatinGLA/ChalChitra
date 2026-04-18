@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './SeatSelection.css';
 
@@ -9,13 +9,32 @@ const PREMIUM_ROWS = 2; // Last 2 rows are premium
 const SeatSelection = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [bookedSeats, setBookedSeats] = useState([]);
   const [promoCode, setPromoCode] = useState('');
   const [discount, setDiscount] = useState(0);
   const [promoMessage, setPromoMessage] = useState('');
-  
-  // Mock randomly booked seats
-  const [bookedSeats] = useState(['A3', 'A4', 'C6', 'C7', 'C8', 'F1', 'F2']);
+  const [bookingLoading, setBookingLoading] = useState(false);
+
+  useEffect(() => {
+    fetchEventData();
+  }, [id]);
+
+  const fetchEventData = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/events/${id}`);
+      if (!response.ok) throw new Error('Event not found');
+      const data = await response.json();
+      setEvent(data);
+      setBookedSeats(data.booked_seats || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleSeat = (seatId) => {
     if (bookedSeats.includes(seatId)) return;
@@ -57,10 +76,49 @@ const SeatSelection = () => {
     return getSubtotal() - discount;
   };
 
-  const handleProceed = () => {
+  const handleProceed = async () => {
     if (selectedSeats.length === 0) return;
-    // Redirect to booking success mockup page
-    navigate(`/success`, { state: { seats: selectedSeats, total: calculateTotal(), eventId: id } });
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("Please login to proceed with booking");
+      navigate('/login');
+      return;
+    }
+
+    setBookingLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          eventId: id,
+          seats: selectedSeats,
+          totalAmount: calculateTotal()
+        })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Booking failed');
+
+      navigate(`/success`, { 
+        state: { 
+          seats: selectedSeats, 
+          total: calculateTotal(), 
+          eventId: id,
+          eventTitle: event.title,
+          eventDate: event.date,
+          eventVenue: event.venue
+        } 
+      });
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
   const renderSeats = () => {
@@ -105,11 +163,17 @@ const SeatSelection = () => {
     return rows;
   };
 
+  if (loading) {
+    return <div className="seat-selection-container" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh'}}>
+      <div className="loading-spinner"></div>
+    </div>;
+  }
+
   return (
     <div className="seat-selection-container">
       <div className="seat-header">
         <h2>Select Your Seats</h2>
-        <p>Arijit Singh Live - JLN Stadium</p>
+        <p>{event?.title} - {event?.venue}</p>
       </div>
 
       <div className="screen-indicator">
@@ -166,8 +230,12 @@ const SeatSelection = () => {
               {discount > 0 && <span className="original-price">₹{getSubtotal()}</span>}
               <h3>Total: ₹{calculateTotal()}</h3>
             </div>
-            <button className="primary-btn proceed-btn pulse-glow" onClick={handleProceed}>
-              Checkout & Pay
+            <button 
+              className="primary-btn proceed-btn pulse-glow" 
+              onClick={handleProceed}
+              disabled={bookingLoading}
+            >
+              {bookingLoading ? 'Processing...' : 'Checkout & Pay'}
             </button>
           </div>
         </div>

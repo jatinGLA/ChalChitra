@@ -3,18 +3,23 @@ import { Link } from 'react-router-dom';
 import './EventCard.css';
 
 const EventCard = ({ event }) => {
+  const displayImage = event.image_url || event.image || 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30';
+  const displayDate = event.date && !isNaN(Date.parse(event.date)) 
+    ? new Date(event.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+    : event.date;
+
   return (
     <Link to={`/event/${event.id}`} className="event-card-link">
       <div className="event-card">
         <div className="card-image-wrapper">
-          <img src={event.image} alt={event.title} className="card-image" />
+          <img src={displayImage} alt={event.title} className="card-image" />
           <div className="card-category-badge">{event.category}</div>
         </div>
         <div className="card-content">
           <h3 className="card-title">{event.title}</h3>
           <p className="card-venue">{event.venue}</p>
           <div className="card-footer">
-            <span className="card-date">{event.date}</span>
+            <span className="card-date">{displayDate}</span>
             <span className="card-price">₹{event.price} onwards</span>
           </div>
         </div>

@@ -1,17 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'users') {
+      fetchUsers();
+    }
+  }, [activeTab]);
+
+  const fetchUsers = async () => {
+    setLoadingUsers(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/users', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const data = await response.json();
+      setUsers(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  const handleUpdateRole = async (userId, currentRole) => {
+    const newRole = currentRole === 'ORGANISER' ? 'USER' : 'ORGANISER';
+    try {
+      const response = await fetch(`http://localhost:5000/api/users/${userId}/role`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (!response.ok) throw new Error('Failed to update role');
+      alert(`Role updated successfully to ${newRole}!`);
+      fetchUsers();
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   const pendingEvents = [
     { id: 101, title: 'Puneeth Rajkumar Tribute', organiser: 'Sandalwood Events', date: '5th Jan 2027', status: 'Pending' },
     { id: 102, title: 'Startup Founders Meet', organiser: 'TechHub', date: '12th Jan 2027', status: 'Pending' }
-  ];
-
-  const usersList = [
-    { id: 1, name: 'Alice Smith', email: 'alice@example.com', role: 'User', joined: 'Oct 2025' },
-    { id: 2, name: 'Sandalwood Events', email: 'contact@sandalwood.in', role: 'Organiser', joined: 'Nov 2025' }
   ];
 
   return (
@@ -86,9 +126,9 @@ const AdminDashboard = () => {
                       <td>{evt.date}</td>
                       <td><span className="badge warning">{evt.status}</span></td>
                       <td className="action-cells">
-                        <button className="approve-btn">Approve</button>
-                        <button className="reject-btn">Reject</button>
-                        <button className="view-btn">Review Details</button>
+                        <button className="approve-btn" onClick={() => alert(`Approved ${evt.title}`)}>Approve</button>
+                        <button className="reject-btn" onClick={() => alert(`Rejected ${evt.title}`)}>Reject</button>
+                        <button className="view-btn" onClick={() => alert(`Reviewing details for ${evt.title}`)}>Review Details</button>
                       </td>
                     </tr>
                   ))}
@@ -100,31 +140,42 @@ const AdminDashboard = () => {
           {activeTab === 'users' && (
             <div className="admin-table-section">
               <h3>System Users</h3>
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {usersList.map(user => (
-                    <tr key={user.id}>
-                      <td><strong>{user.name}</strong></td>
-                      <td>{user.email}</td>
-                      <td><span className={`badge ${user.role === 'Organiser' ? 'info' : 'default'}`}>{user.role}</span></td>
-                      <td>{user.joined}</td>
-                      <td className="action-cells">
-                        <button className="view-btn">Edit Role</button>
-                        <button className="reject-btn">Suspend</button>
-                      </td>
+              {loadingUsers ? (
+                <div className="loading-spinner"></div>
+              ) : (
+                <table className="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Joined</th>
+                      <th>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {users.map(user => (
+                      <tr key={user.id}>
+                        <td><strong>{user.name}</strong></td>
+                        <td>{user.email}</td>
+                        <td><span className={`badge ${user.role === 'ORGANISER' ? 'info' : (user.role === 'ADMIN' ? 'danger' : 'default')}`}>{user.role}</span></td>
+                        <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                        <td className="action-cells">
+                          {user.role !== 'ADMIN' && (
+                            <button 
+                              className="view-btn" 
+                              onClick={() => handleUpdateRole(user.id, user.role)}
+                            >
+                              {user.role === 'ORGANISER' ? 'Revert to User' : 'Grant Organiser'}
+                            </button>
+                          )}
+                          <button className="reject-btn" onClick={() => alert(`Suspending user ${user.name}... (Admin action)`)}>Suspend</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           )}
 

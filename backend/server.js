@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
@@ -23,6 +22,8 @@ import eventRoutes from './routes/eventRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import ticketRoutes from './routes/ticketRoutes.js';
+import requestRoutes from './routes/requestRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -30,8 +31,10 @@ app.use('/api/events', eventRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/tickets', ticketRoutes);
+app.use('/api/requests', requestRoutes);
+app.use('/api/users', userRoutes);
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'OK', message: 'ChalChitra API is running' });
+  res.status(200).json({ status: 'OK', message: 'ChalChitra API is running on Supabase' });
 });
 
 // Socket.io for Real-time Seat Booking
@@ -49,14 +52,10 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/chalchitra';
 
-// Start Server & Connect to DB
-const startServer = async () => {
+// Start Server directly since Supabase client connects via stateless HTTP API
+const startServer = () => {
   try {
-    await mongoose.connect(MONGO_URI);
-    console.log('MongoDB Connected Successfully');
-    
     httpServer.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

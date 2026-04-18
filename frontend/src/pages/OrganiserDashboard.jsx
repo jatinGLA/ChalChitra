@@ -65,8 +65,8 @@ const OrganiserDashboard = () => {
                     <span className="occupancy-text">{evt.sold} / {evt.capacity}</span>
                   </td>
                   <td>
-                    <button className="icon-btn edit-btn">Edit</button>
-                    <button className="icon-btn analytics-btn">Stats</button>
+                    <button className="icon-btn edit-btn" onClick={() => alert(`Editing event: ${evt.title}`)}>Edit</button>
+                    <button className="icon-btn analytics-btn" onClick={() => alert(`Viewing stats for: ${evt.title}`)}>Stats</button>
                   </td>
                 </tr>
               ))}

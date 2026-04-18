@@ -21,6 +21,28 @@ body {
   color: var(--text-main);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Global Floating Particle Animation */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 20%),
+              radial-gradient(circle, transparent 20%, transparent 80%);
+  background-size: 120px 120px;
+  opacity: 0.12;
+  animation: floatGlobalBG 60s linear infinite;
+  pointer-events: none;
+  z-index: -10;
+}
+
+@keyframes floatGlobalBG {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 h1, h2, h3, h4, h5, h6 {
