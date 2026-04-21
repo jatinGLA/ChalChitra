@@ -253,25 +253,62 @@
 }
 
 @media (max-width: 768px) {
+  .seat-header h2 {
+    font-size: 1.6rem;
+  }
+  .seating-layout {
+    gap: 10px;
+    padding: 20px 0;
+    overflow-x: auto;
+    width: 100vw;
+    margin-left: -20px;
+  }
   .seats-container {
     gap: 5px;
   }
   .seat {
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
     font-size: 0.6rem;
+    border-radius: 4px;
   }
-  .seat-wrapper[style] {
-    margin-right: 15px !important;
+  .row-label {
+    width: 20px;
+    font-size: 0.8rem;
   }
   .booking-summary-bar {
     flex-direction: column;
-    gap: 15px;
-    padding: 15px 20px;
-    text-align: center;
+    gap: 20px;
+    padding: 20px;
   }
   .summary-left {
     flex-direction: column;
     gap: 15px;
+    width: 100%;
+  }
+  .summary-action {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .proceed-btn {
+    flex: 1;
+    margin-left: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .seating-layout {
+    align-items: flex-start;
+    padding-left: 20px;
+  }
+  .seat-legend {
+    gap: 15px;
+  }
+  .summary-action h3 {
+    font-size: 1.2rem;
+  }
+  .proceed-btn {
+    padding: 12px 20px;
+    font-size: 1rem;
   }
 }

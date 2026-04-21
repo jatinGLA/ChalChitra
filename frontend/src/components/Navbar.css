@@ -20,6 +20,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
+}
+
+.mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 1001;
 }
 
 .navbar-logo {
@@ -39,6 +50,7 @@
   flex: 1;
   margin: 0 40px;
   max-width: 500px;
+  transition: all 0.3s ease;
 }
 
 .navbar-search input {
@@ -64,6 +76,76 @@
   display: flex;
   align-items: center;
   gap: 20px;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 992px) {
+  .navbar-search {
+    margin: 0 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .mobile-toggle {
+    display: block;
+  }
+
+  .navbar-search {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    padding: 15px 20px;
+    background: var(--card-bg);
+    margin: 0;
+    max-width: none;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .navbar-search.mobile-active {
+    display: block;
+  }
+
+  .navbar-menu {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-color);
+    padding: 40px 20px;
+    gap: 30px;
+    z-index: 1000;
+    align-items: flex-start;
+  }
+
+  .navbar-menu.mobile-active {
+    display: flex;
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .location {
+    font-size: 1.2rem;
+  }
+
+  .login-btn {
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.1rem;
+  }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .location {
@@ -94,3 +176,8 @@
   background-color: var(--primary-color);
   box-shadow: 0 0 15px var(--accent-glow);
 }
+
+.logout-nav-btn {
+  border: 1px solid rgba(255,255,255,0.2);
+}
+

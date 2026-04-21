@@ -5,6 +5,7 @@ import './Navbar.css';
 
 const Navbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location, setLocation] = useState('Delhi-NCR');
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : null;
@@ -13,6 +14,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    setIsMenuOpen(false);
     navigate('/login');
   };
 
@@ -25,28 +27,34 @@ const Navbar = () => {
               <h1>Chal<span>Chitra</span></h1>
             </Link>
           </div>
-          <div className="navbar-search">
+
+          <button className="mobile-toggle" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? '✕' : '☰'}
+          </button>
+
+          <div className={`navbar-search ${isMenuOpen ? 'mobile-active' : ''}`}>
             <input 
               type="text" 
-              placeholder="Search for Movies, Events, Plays..." 
+              placeholder="Search for Movies, Events..." 
               onKeyDown={(e) => {
                 if(e.key === 'Enter') {
-                  alert(`Searching for: ${e.target.value}... (Global search coming soon!)`);
+                  alert(`Searching for: ${e.target.value}...`);
                 }
               }}
             />
           </div>
-          <div className="navbar-menu">
-            <Link to="/resale-market" className="location" style={{textDecoration: 'none', color: '#fbbf24', fontWeight: '600'}}>💹 Marketplace</Link>
-            <Link to="/host" className="location" style={{textDecoration: 'none', color: 'var(--text-main)', fontWeight: '600'}}>Host Event</Link>
-            <span className="location location-selector" onClick={() => setIsModalOpen(true)} style={{cursor: 'pointer'}}>{location} ▼</span>
+
+          <div className={`navbar-menu ${isMenuOpen ? 'mobile-active' : ''}`}>
+            <Link to="/resale-market" className="location" onClick={() => setIsMenuOpen(false)} style={{textDecoration: 'none', color: '#fbbf24', fontWeight: '600'}}>💹 Marketplace</Link>
+            <Link to="/host" className="location" onClick={() => setIsMenuOpen(false)} style={{textDecoration: 'none', color: 'var(--text-main)', fontWeight: '600'}}>Host Event</Link>
+            <span className="location location-selector" onClick={() => { setIsModalOpen(true); setIsMenuOpen(false); }} style={{cursor: 'pointer'}}>{location} ▼</span>
             {user ? (
               <>
-                <Link to="/my-tickets" className="location" style={{textDecoration: 'none', color: 'var(--primary-color)', fontWeight: '600'}}>🎟️ My Vault</Link>
-                <button onClick={handleLogout} className="login-btn" style={{border: '1px solid rgba(255,255,255,0.2)'}}>Logout</button>
+                <Link to="/my-tickets" className="location" onClick={() => setIsMenuOpen(false)} style={{textDecoration: 'none', color: 'var(--primary-color)', fontWeight: '600'}}>🎟️ My Vault</Link>
+                <button onClick={handleLogout} className="login-btn logout-nav-btn">Logout</button>
               </>
             ) : (
-              <Link to="/login" className="login-btn" style={{textDecoration: 'none'}}>Sign In</Link>
+              <Link to="/login" className="login-btn" onClick={() => setIsMenuOpen(false)} style={{textDecoration: 'none'}}>Sign In</Link>
             )}
           </div>
         </div>
