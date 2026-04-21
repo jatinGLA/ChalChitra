@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import './SeatSelection.css';
 
 const ROWS = 8;
@@ -24,7 +25,7 @@ const SeatSelection = () => {
 
   const fetchEventData = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/events/${id}`);
+      const response = await fetch(`${API_BASE_URL}/api/events/${id}`);
       if (!response.ok) throw new Error('Event not found');
       const data = await response.json();
       setEvent(data);
@@ -89,7 +90,7 @@ const SeatSelection = () => {
 
     setBookingLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/bookings', {
+      const bookingResponse = await fetch(`${API_BASE_URL}/api/bookings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,19 +103,83 @@ const SeatSelection = () => {
         })
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Booking failed');
+      const bookingData = await bookingResponse.json();
+      if (!bookingResponse.ok) throw new Error(bookingData.message || 'Booking failed');
 
-      navigate(`/success`, { 
-        state: { 
-          seats: selectedSeats, 
-          total: calculateTotal(), 
-          eventId: id,
-          eventTitle: event.title,
-          eventDate: event.date,
-          eventVenue: event.venue
-        } 
+      // 2. Create Razorpay order
+      const orderResponse = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          amount: calculateTotal(),
+          bookingId: bookingData.bookingId
+        })
       });
+
+      const orderData = await orderResponse.json();
+      if (!orderResponse.ok) throw new Error(orderData.message || 'Failed to create payment order');
+
+      // 3. Open Razorpay Widget
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'dummy_key', // use real or fallback
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "ChalChitra Ticketing",
+        description: `Booking for ${event.title}`,
+        order_id: orderData.id,
+        handler: async function (response) {
+          try {
+            // 4. Verify Payment Server-Side
+            const verifyResponse = await fetch(`${API_BASE_URL}/api/payments/verify`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                bookingId: bookingData.bookingId
+              })
+            });
+
+            const verifyData = await verifyResponse.json();
+            if (!verifyResponse.ok) throw new Error(verifyData.message || 'Payment verification failed');
+
+            // 5. Success
+            navigate(`/success`, { 
+              state: { 
+                seats: selectedSeats, 
+                total: calculateTotal(), 
+                eventId: id,
+                eventTitle: event.title,
+                eventDate: event.date,
+                eventVenue: event.venue
+              } 
+            });
+          } catch(err) {
+             alert(err.message);
+          }
+        },
+        prefill: {
+          name: "ChalChitra User",
+          email: "user@example.com"
+        },
+        theme: {
+          color: "#d92b2b" // matching red from CSS
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+        alert("Payment failed: " + response.error.description);
+      });
+      rzp.open();
+
     } catch (err) {
       alert(err.message);
     } finally {

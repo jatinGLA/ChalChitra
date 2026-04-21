@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EventCard from '../components/EventCard';
+import { API_BASE_URL } from '../config';
 import './Home.css';
 
 
@@ -15,7 +16,7 @@ const Home = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/events');
+      const response = await fetch(`${API_BASE_URL}/api/events`);
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       setEvents(data);
@@ -90,14 +91,19 @@ const Home = () => {
           <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="view-all-link" style={{background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: '1rem', color: 'var(--primary-color)'}}>Back to Top &uarr;</button>
         </div>
         <div className="events-grid">
-           {[
-             {id: 1, name: 'PVR Director`s Cut', location: 'Vasant Kunj', img: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500&q=80', features: 'Dolby Atmos, Recliners'},
-             {id: 2, name: 'INOX Megaplex', location: 'Nehru Place', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80', features: 'IMAX, 4DX'},
-             {id: 3, name: 'Siri Fort Auditorium', location: 'Asian Games', img: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=500&q=80', features: 'Live Concerts, Plays'},
-             {id: 4, name: 'JLN Stadium', location: 'Pragati Vihar', img: 'https://images.unsplash.com/photo-1540039155732-d6888424a7ba?w=500&q=80', features: 'Open Air, Mega Events'}
-           ].map(venue => (
-             <div key={venue.id} className="event-card" style={{paddingBottom: '20px', backgroundColor: 'var(--card-bg)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)'}}>
-                <img src={venue.img} alt={venue.name} style={{width: '100%', height: '200px', objectFit: 'cover', borderRadius: '16px 16px 0 0', marginBottom: '15px'}} />
+            {[
+              {id: 1, name: 'PVR Director`s Cut', location: 'Vasant Kunj', img: 'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=500&q=80', features: 'Dolby Atmos, Recliners'},
+              {id: 2, name: 'INOX Megaplex', location: 'Nehru Place', img: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80', features: 'IMAX, 4DX'},
+              {id: 3, name: 'Siri Fort Auditorium', location: 'Asian Games', img: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?w=500&q=80', features: 'Live Concerts, Plays'},
+              {id: 4, name: 'JLN Stadium', location: 'Pragati Vihar', img: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=500&q=80', features: 'Open Air, Mega Events'}
+            ].map(venue => (
+              <div key={venue.id} className="event-card" style={{paddingBottom: '20px', backgroundColor: 'var(--card-bg)', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)'}}>
+                 <img 
+                   src={venue.img} 
+                   alt={venue.name} 
+                   style={{width: '100%', height: '200px', objectFit: 'cover', borderRadius: '16px 16px 0 0', marginBottom: '15px'}} 
+                   onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=500&q=80'; }}
+                 />
                 <div style={{padding: '0 20px'}}>
                   <h3 style={{fontSize: '1.2rem', marginBottom: '5px'}}>{venue.name}</h3>
                   <p style={{color: 'var(--text-muted)'}}>{venue.location}</p>

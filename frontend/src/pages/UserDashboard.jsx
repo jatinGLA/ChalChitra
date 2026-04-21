@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { API_BASE_URL } from '../config';
 import './UserDashboard.css';
 
 const UserDashboard = () => {
@@ -36,7 +37,7 @@ const UserDashboard = () => {
   const fetchMyTickets = async (userId) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/tickets/my-tickets', {
+      const response = await fetch(`${API_BASE_URL}/api/tickets/my-tickets`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -58,7 +59,7 @@ const UserDashboard = () => {
   const handleListForResale = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/resell/${resaleModalTicket.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tickets/resell/${resaleModalTicket.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ const UserDashboard = () => {
   const handleTransfer = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/transfer/${transferModalTicket.id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/tickets/transfer/${transferModalTicket.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +110,7 @@ const UserDashboard = () => {
     setBidsModalTicket(ticket);
     setBidsLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/${ticket.id}/bids`, {
+      const response = await fetch(`${API_BASE_URL}/api/tickets/${ticket.id}/bids`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -126,7 +127,7 @@ const UserDashboard = () => {
 
   const acceptBid = async (bidId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/tickets/bids/${bidId}/accept`, {
+      const response = await fetch(`${API_BASE_URL}/api/tickets/bids/${bidId}/accept`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -174,7 +175,7 @@ const UserDashboard = () => {
                     <div className="ticket-seat">Seat: <strong>{ticket.seat_number}</strong></div>
                     
                     <div className="ticket-actions">
-                      <button className="dl-btn" onClick={() => window.open(`http://localhost:5000/api/tickets/download/${ticket.id}`, '_blank')}>
+                      <button className="dl-btn" onClick={() => window.open(`${API_BASE_URL}/api/tickets/download/${ticket.id}`, '_blank')}>
                         Download Pass
                       </button>
 

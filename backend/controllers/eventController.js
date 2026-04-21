@@ -24,6 +24,24 @@ export const getEventById = async (req, res) => {
       .single();
 
     if (error || !event) return res.status(404).json({ message: 'Event not found' });
+
+    // Calculate booked seats dynamically from bookings table
+    // (Completed OR Pending < 15 mins)
+    const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    
+    const { data: bookings } = await supabase
+      .from('bookings')
+      .select('seats, payment_status, created_at')
+      .eq('event_id', req.params.id)
+      .or(`payment_status.eq.Completed,and(payment_status.eq.Pending,created_at.gte.${fifteenMinsAgo})`);
+
+    const booked = new Set();
+    bookings?.forEach(b => {
+      b.seats.forEach(s => booked.add(s));
+    });
+
+    event.booked_seats = Array.from(booked);
+    
     res.json(event);
   } catch (error) {
     res.status(500).json({ message: 'Server error' });

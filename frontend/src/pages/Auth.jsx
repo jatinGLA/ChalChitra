@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
+import { API_BASE_URL } from '../config';
 import './Auth.css';
 
 const Auth = () => {
@@ -44,7 +45,7 @@ const Auth = () => {
     setErrorMSG('');
     setSuccessMSG('');
     try {
-      const response = await fetch('http://localhost:5000/api/requests', {
+      const response = await fetch(`${API_BASE_URL}/api/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -72,7 +73,7 @@ const Auth = () => {
     setErrorMSG('');
     
     try {
-      const endpoint = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
+      const endpoint = isLogin ? `${API_BASE_URL}/api/auth/login` : `${API_BASE_URL}/api/auth/register`;
       
       const payload = {
         password: formData.password

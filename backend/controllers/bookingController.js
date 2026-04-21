@@ -5,19 +5,37 @@ export const createBooking = async (req, res) => {
   try {
     const { eventId, seats, totalAmount } = req.body;
     
-    // Fetch Event
+    // 1. Fetch Event
     const { data: event, error: fetchEventError } = await supabase
       .from('events')
-      .select('id, booked_seats')
+      .select('id')
       .eq('id', eventId)
       .single();
 
     if (fetchEventError || !event) return res.status(404).json({ message: 'Event not found' });
 
-    // Mock Razorpay Order ID for now
-    const mockPaymentId = 'order_' + crypto.randomBytes(8).toString('hex');
+    // 2. Check for existing active bookings (Completed OR Pending < 15 mins)
+    const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    
+    const { data: activeBookings, error: activeError } = await supabase
+      .from('bookings')
+      .select('seats, payment_status, created_at')
+      .eq('event_id', eventId)
+      .or(`payment_status.eq.Completed,and(payment_status.eq.Pending,created_at.gte.${fifteenMinsAgo})`);
 
-    // Create Booking
+    if (activeError) throw activeError;
+
+    const currentlyBookedSet = new Set();
+    activeBookings?.forEach(b => {
+      b.seats.forEach(s => currentlyBookedSet.add(s));
+    });
+
+    const isAnySeatTaken = seats.some(s => currentlyBookedSet.has(s));
+    if (isAnySeatTaken) {
+      return res.status(400).json({ message: 'One or more of selected seats were just taken. Please refresh and try again.' });
+    }
+
+    // 3. Create Booking with 'Pending' status
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .insert([{
@@ -25,39 +43,14 @@ export const createBooking = async (req, res) => {
         event_id: eventId,
         seats,
         total_amount: totalAmount,
-        payment_id: mockPaymentId
+        payment_status: 'Pending'
       }])
       .select()
       .single();
 
     if (bookingError) throw bookingError;
 
-    // Mark seats as booked (PostgreSQL array append)
-    const updatedBookedSeats = [...(event.booked_seats || []), ...seats];
-    const { error: eventUpdateError } = await supabase
-      .from('events')
-      .update({ booked_seats: updatedBookedSeats })
-      .eq('id', eventId);
-
-    if (eventUpdateError) throw eventUpdateError;
-
-    // 4. Generate individual Ticket records for each seat
-    const ticketsData = seats.map(seat => ({
-      owner_id: req.user.id,
-      event_id: eventId,
-      seat_number: seat,
-      booking_id: booking.id,
-      is_resellable: false,
-      resale_active: false
-    }));
-
-    const { error: ticketsError } = await supabase
-      .from('tickets')
-      .insert(ticketsData);
-
-    if (ticketsError) throw ticketsError;
-
-    res.status(201).json({ bookingId: booking.id, paymentId: mockPaymentId, amount: totalAmount });
+    res.status(201).json({ bookingId: booking.id, amount: totalAmount });
   } catch (error) {
     res.status(500).json({ message: 'Error creating booking', error: error.message });
   }

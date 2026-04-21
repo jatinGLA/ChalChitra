@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from '../config';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -15,7 +16,7 @@ const AdminDashboard = () => {
   const fetchUsers = async () => {
     setLoadingUsers(true);
     try {
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(`${API_BASE_URL}/api/users`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -33,7 +34,7 @@ const AdminDashboard = () => {
   const handleUpdateRole = async (userId, currentRole) => {
     const newRole = currentRole === 'ORGANISER' ? 'USER' : 'ORGANISER';
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${userId}/role`, {
+      const response = await fetch(`${API_BASE_URL}/api/users/${userId}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

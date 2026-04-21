@@ -12,7 +12,12 @@ const EventCard = ({ event }) => {
     <Link to={`/event/${event.id}`} className="event-card-link">
       <div className="event-card">
         <div className="card-image-wrapper">
-          <img src={displayImage} alt={event.title} className="card-image" />
+          <img 
+            src={displayImage} 
+            alt={event.title} 
+            className="card-image" 
+            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80'; }}
+          />
           <div className="card-category-badge">{event.category}</div>
         </div>
         <div className="card-content">

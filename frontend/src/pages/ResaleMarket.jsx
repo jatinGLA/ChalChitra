@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config';
 import './ResaleMarket.css';
 
 const ResaleMarket = () => {
@@ -22,7 +23,7 @@ const ResaleMarket = () => {
 
   const fetchMarketplace = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/tickets/marketplace');
+      const response = await fetch(`${API_BASE_URL}/api/tickets/marketplace`);
       if (!response.ok) throw new Error('Failed to fetch marketplace');
       const data = await response.json();
       setMarketTickets(data);
@@ -46,7 +47,7 @@ const ResaleMarket = () => {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/api/tickets/${bidModalTicket.id}/bids`, {
+      const response = await fetch(`${API_BASE_URL}/api/tickets/${bidModalTicket.id}/bids`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
