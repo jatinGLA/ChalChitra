@@ -81,8 +81,9 @@ const SeatSelection = () => {
     
     const token = localStorage.getItem('token');
     if (!token) {
+      // Prompt user then redirect with return path
       alert("Please login to proceed with booking");
-      navigate('/login');
+      navigate(`/login?redirect=${encodeURIComponent(`/book/${id}`)}`);
       return;
     }
 

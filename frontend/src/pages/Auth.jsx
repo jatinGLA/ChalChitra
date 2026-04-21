@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../supabase';
 import './Auth.css';
 
@@ -24,6 +24,8 @@ const Auth = () => {
   const [successMSG, setSuccessMSG] = useState('');
   
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectPath = searchParams.get('redirect');
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -105,11 +107,15 @@ const Auth = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data));
 
-      // Redirect dynamically based on backend role
-      const userRole = data.role;
-      if (userRole === 'ADMIN') navigate('/admin');
-      else if (userRole === 'ORGANISER') navigate('/organiser');
-      else navigate('/');
+      // Redirect dynamically: Follow redirect param if exists, otherwise use role-based logic
+      if (redirectPath && data.role === 'USER') {
+        navigate(redirectPath);
+      } else {
+        const userRole = data.role;
+        if (userRole === 'ADMIN') navigate('/admin');
+        else if (userRole === 'ORGANISER') navigate('/organiser');
+        else navigate('/');
+      }
       
     } catch (error) {
       console.error('Auth error:', error);
