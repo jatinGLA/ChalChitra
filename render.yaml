@@ -1,0 +1,25 @@
+/** 
+ * Render.yaml Blueprint for ChalChitra
+ * This file allows you to deploy the backend automatically.
+ */
+services:
+  - type: web
+    name: chalchitra-api
+    runtime: node
+    plan: free # Change to starter for better performance
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: PORT
+        value: 5000
+      - key: NODE_ENV
+        value: production
