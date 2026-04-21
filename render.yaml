@@ -1,7 +1,6 @@
-/** 
- * Render.yaml Blueprint for ChalChitra
- * This file allows you to deploy the backend automatically.
- */
+# Render.yaml Blueprint for ChalChitra
+# This file allows you to deploy the backend automatically.
+
 services:
   - type: web
     name: chalchitra-api
