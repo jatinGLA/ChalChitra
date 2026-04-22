@@ -28,7 +28,13 @@ const io = new Server(httpServer, {
 // ============================================
 
 // Enable CORS - allows frontend to communicate with this API
-app.use(cors());
+// In production, you might want to restrict this to your Vercel domain
+app.use(cors({
+  origin: '*', // Allow all origins for now
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 
 // Middleware to parse incoming JSON requests
 app.use(express.json());
