@@ -1,193 +1,52 @@
-# ChalChitra 🎬🎫
-**An Event and Movie Booking Platform**
+# ChalChitra - Smart Event Ticketing & Resale Marketplace
 
-A full-stack web application that enables users to browse, book, and manage event and movie tickets seamlessly. The platform includes real-time seat booking, secure payment processing, and comprehensive event management features.
+ChalChitra is a high-performance, full-stack event ticketing platform designed to solve the "scalping" problem through a built-in, secure ticket resale marketplace with a competitive bidding engine.
 
-## 📋 Table of Contents
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Backend Setup](#backend-setup)
-- [Frontend Setup](#frontend-setup)
-- [API Endpoints](#api-endpoints)
-- [Real-time Features](#real-time-features)
+## 🚀 Tech Stack: Why These Tools?
 
-## ✨ Features
-- **User Authentication** - Secure JWT-based authentication with bcrypt password hashing
-- **Event Management** - Create, browse, and manage events and shows
-- **Seat Selection** - Interactive seat selection with real-time availability updates
-- **Booking System** - Complete booking workflow with booking status tracking
-- **Payment Processing** - Integrated Razorpay payment gateway for secure transactions
-- **Ticket Generation** - PDF tickets with QR codes for easy verification
-- **Resale Market** - Secondary market for ticket reselling
-- **Admin Dashboard** - Comprehensive admin panel for event and booking management
-- **Real-time Updates** - Socket.io integration for live seat availability and booking updates
-- **User Profiles** - User dashboard to manage bookings and tickets
+### Frontend: React.js (Vite)
+- **Why**: React was chosen for its component-based architecture, which allows us to reuse UI elements like "Event Cards" and "Seat Grids" across different pages.
+- **Benefit**: Vite is used as the build tool because it provides near-instant hot module replacement (HMR), making the development process 10x faster than traditional CRA.
 
-## 📁 Project Structure
-```
-ChalChitra/
-├── backend/                  # Node.js/Express API server
-│   ├── server.js            # Express server setup & Socket.io configuration
-│   ├── package.json         # Backend dependencies
-│   ├── config/
-│   │   └── supabaseClient.js    # Supabase database client configuration
-│   ├── controllers/         # Business logic for each feature
-│   │   ├── authController.js    # User authentication logic
-│   │   ├── bookingController.js # Booking management
-│   │   ├── eventController.js   # Event CRUD operations
-│   │   ├── paymentController.js # Payment processing
-│   │   ├── ticketController.js  # Ticket generation & management
-│   │   └── ...
-│   ├── routes/              # API endpoint definitions
-│   ├── middleware/          # Authentication & other middleware
-│   └── utils/               # Helper functions (fee calculations, etc.)
-└── frontend/                # React + Vite web application
-    ├── package.json         # Frontend dependencies
-    ├── vite.config.js       # Vite build configuration
-    ├── index.html           # HTML entry point
-    └── src/
-        ├── main.jsx         # React application entry
-        ├── App.jsx          # Main App component
-        ├── supabase.js      # Supabase client initialization
-        ├── components/      # Reusable React components
-        │   ├── EventCard.jsx        # Event card display component
-        │   ├── Navbar.jsx           # Navigation bar
-        │   └── ...
-        └── pages/           # Page components for routing
-            ├── Home.jsx             # Landing page
-            ├── Auth.jsx             # Login/Register page
-            ├── EventDetails.jsx     # Event details page
-            ├── SeatSelection.jsx    # Interactive seat selection
-            ├── AdminDashboard.jsx   # Admin control panel
-            └── ...
-```
+### Backend: Node.js & Express.js
+- **Why**: Node.js allows us to use JavaScript on the server side, creating a unified language across the stack. Express.js is a minimalist framework that gives us full control over API routing and middleware.
+- **Benefit**: It is non-blocking and event-driven, which is essential for handling multiple concurrent bookings and WebSocket connections.
 
-## 🛠️ Tech Stack
+### Real-Time: Socket.io
+- **Why**: Standard HTTP requests (GET/POST) are "one-way." Socket.io enables **bi-directional** communication.
+- **Feature (Seat Locking)**: We use Socket.io for **Live Seat Selection**. When a user clicks a seat to book it, the server emits a `seat_locked` event to all other users currently viewing that event. This prevents two people from trying to pay for the same seat at the same time.
 
-**Backend:**
-- Node.js with Express.js - REST API server
-- Supabase - PostgreSQL database & authentication
-- Socket.io - Real-time communication
-- JWT - Secure authentication
-- bcrypt - Password hashing
-- Razorpay - Payment gateway
-- PDFKit - PDF ticket generation
-- QRCode - QR code generation for tickets
+### Database: Supabase (PostgreSQL)
+- **Why**: Supabase provides the power of PostgreSQL (relational data) with the convenience of a "Backend-as-a-Service." 
+- **Benefit**: It handles our User Authentication, Row-Level Security (RLS), and complex queries (like linking tickets to events and owners) with extreme efficiency.
 
-**Frontend:**
-- React 18 - UI library
-- Vite - Build tool and dev server
-- React Router DOM - Client-side routing
-- Socket.io Client - Real-time updates
-- Supabase Client - Database queries from frontend
+### Payments: Razorpay
+- **Why**: Razorpay is India's leading payment gateway, offering a seamless checkout experience with support for UPI, Cards, and Netbanking.
+- **Benefit**: Its robust Webhook system ensures that tickets are only generated after the payment is successfully verified.
 
-## 🚀 Getting Started
+### Documentation & Assets: PDFKit & QRCode
+- **Why**: To provide a professional user experience, we use `PDFKit` to generate valid E-Tickets on-the-fly. 
+- **Benefit**: Each ticket includes a unique `QRCode` generated from the booking ID, allowing event organizers to scan and verify entries at the venue.
 
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn package manager
-- Supabase account and API keys
-- Razorpay account for payment processing
+## 🌟 Key Features
 
-### Backend Setup
+### 1. Advanced Booking System
+- **Real-Time Seat Locking**: Powered by Socket.io to ensure no double-bookings.
+- **E-Ticket Generation**: Instant PDF downloads with unique QR codes for verification.
 
-1. Navigate to backend folder:
-   ```bash
-   cd backend
-   ```
+### 2. Ticket Resale Marketplace (Unique Selling Point)
+- **Bidding Engine**: Solves the "sold-out" problem by letting users bid on tickets from others who can't attend.
+- **Smart Fee Calculator**: Automatically calculates a 3% platform fee (split between the host and the platform) to ensure transparency.
+- **Instant Ownership Transfer**: Securely transfers ticket ownership within the database after a bid is accepted.
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+### 3. Role-Based Dashboards
+- **User Dashboard (My Vault)**: Manage tickets, list them for resale, or download PDFs.
+- **Organiser Dashboard**: Host new events, manage ticket inventory, and track sales.
 
-3. Create a `.env` file with required environment variables:
-   ```
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_KEY=your_supabase_key
-   RAZORPAY_KEY_ID=your_razorpay_key
-   RAZORPAY_KEY_SECRET=your_razorpay_secret
-   JWT_SECRET=your_jwt_secret
-   PORT=5000
-   ```
+## 🛠️ Infrastructure
+- **Frontend Hosting**: **Vercel** (Global Edge Network for fast loading).
+- **Backend Hosting**: **Render** (Auto-scaling cloud instances).
+- **Database**: **Supabase Cloud** (Managed PostgreSQL).
 
-4. Start development server:
-   ```bash
-   npm run dev
-   ```
-
-   Or start production server:
-   ```bash
-   npm start
-   ```
-
-### Frontend Setup
-
-1. Navigate to frontend folder:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Create a `.env` file with Supabase configuration:
-   ```
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-4. Start development server:
-   ```bash
-   npm run dev
-   ```
-
-   Build for production:
-   ```bash
-   npm run build
-   ```
-
-## 📡 API Endpoints
-
-**Authentication:**
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-
-**Events:**
-- `GET /api/events` - Fetch all events
-- `GET /api/events/:id` - Get event details
-- `POST /api/events` - Create new event (admin)
-- `PUT /api/events/:id` - Update event
-- `DELETE /api/events/:id` - Delete event
-
-**Bookings:**
-- `POST /api/bookings` - Create booking
-- `GET /api/bookings/:userId` - Get user bookings
-- `GET /api/bookings` - Get all bookings (admin)
-
-**Payments:**
-- `POST /api/payments/create` - Create payment order
-- `POST /api/payments/verify` - Verify payment
-
-**Tickets:**
-- `GET /api/tickets/:bookingId` - Download ticket PDF
-- `GET /api/tickets/verify/:qrCode` - Verify ticket QR code
-
-**Requests:**
-- `POST /api/requests` - Submit support request
-- `GET /api/requests` - Get all requests (admin)
-
-## 🔄 Real-time Features
-
-The application uses **Socket.io** for real-time updates:
-
-- **Seat Locking** - When users select seats, other clients are notified in real-time
-- **Live Availability** - Seat availability updates instantly across all connected clients
-- **Booking Updates** - Real-time notifications for booking confirmations
-
-## 📝 License
-Proprietary - ChalChitra 2026
+---
+**Developed with ❤️ for the next generation of event experiences.**
