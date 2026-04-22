@@ -14,7 +14,7 @@ export const getMyTickets = async (req, res) => {
         seat_number,
         is_resellable,
         resale_price,
-        events (
+        events!tickets_event_id_fkey (
           id,
           title,
           date,
@@ -38,7 +38,7 @@ export const listTicketForResale = async (req, res) => {
   try {
     const { data: ticket, error: fetchError } = await supabase
       .from('tickets')
-      .select('*, events(*)')
+      .select('*, events!tickets_event_id_fkey(*)')
       .eq('id', req.params.id)
       .single();
 
@@ -122,7 +122,7 @@ export const getMarketplaceTickets = async (req, res) => {
   try {
     const { data: tickets, error } = await supabase
       .from('tickets')
-      .select('*, events(*)')
+      .select('*, events!tickets_event_id_fkey(*)')
       .eq('is_resellable', true)
       .eq('resale_active', true)
       .order('updated_at', { ascending: false });
